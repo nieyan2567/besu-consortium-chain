@@ -1,0 +1,126 @@
+version: "3.8"
+
+networks:
+  besu-net:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
+          gateway: 172.20.0.1
+
+services:
+  validator1:
+    image: hyperledger/besu:25.12.0
+    container_name: besu-validator1
+    working_dir: /besu
+    user: "1000:1000"
+    volumes:
+      - ./networkFiles:/networkFiles:ro
+      - ./data/validator1:/data
+      - ./logs:/logs
+    command: >
+      --data-path=/data
+      --genesis-file=/networkFiles/genesis.json
+      --node-private-key-file=/networkFiles/keys/0x8df125a7aa721a8238a32a330b2a3ab4a410d0ef/key
+      --rpc-http-enabled=true
+      --rpc-http-host=0.0.0.0
+      --rpc-http-port=8545
+      --rpc-http-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG
+      --host-allowlist=localhost,127.0.0.1,validator1,validator2,validator3,validator4,172.20.0.0/24
+      --rpc-http-cors-origins=http://localhost
+      --rpc-ws-enabled=true
+      --rpc-ws-host=0.0.0.0
+      --rpc-ws-port=8546
+      --rpc-ws-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG
+      --p2p-host=0.0.0.0
+      --p2p-port=30303
+      --logging=INFO
+      --min-gas-price=0
+      --sync-min-peers=0
+      --metrics-enabled=true
+      --metrics-host=0.0.0.0
+      --metrics-port=9545
+    ports:
+      - "127.0.0.1:8545:8545"
+      - "127.0.0.1:8546:8546"
+      - "30303:30303"
+      - "127.0.0.1:9545:9545"
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.2
+
+  validator2:
+    image: hyperledger/besu:25.12.0
+    container_name: besu-validator2
+    working_dir: /besu
+    user: "1000:1000"
+    volumes:
+      - ./networkFiles:/networkFiles:ro
+      - ./data/validator2:/data
+    command: >
+      --data-path=/data
+      --genesis-file=/networkFiles/genesis.json
+      --node-private-key-file=/networkFiles/keys/0xca444de754a773421d59e5ca1ed22825bcb7cd18/key
+      --rpc-http-enabled=false
+      --p2p-host=0.0.0.0
+      --p2p-port=30303
+      --logging=INFO
+      --min-gas-price=0
+      --sync-min-peers=0
+      --bootnodes=enode://261235ef234441f3e846dddfb31943e773e76ba0d0c519bb881bdf4cba1b6773d09aaf2e475943d0f2353cc2016175faa81cb6fc9c60d7b08a388b935176e1cc@47.111.17.198:30303
+    depends_on:
+      - validator1
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.3
+
+  validator3:
+    image: hyperledger/besu:25.12.0
+    container_name: besu-validator3
+    working_dir: /besu
+    user: "1000:1000"
+    volumes:
+      - ./networkFiles:/networkFiles:ro
+      - ./data/validator3:/data
+    command: >
+      --data-path=/data
+      --genesis-file=/networkFiles/genesis.json
+      --node-private-key-file=/networkFiles/keys/0xe8fb658de4b4898f191c9f17040999ce451da637/key
+      --rpc-http-enabled=false
+      --p2p-host=0.0.0.0
+      --p2p-port=30303
+      --logging=INFO
+      --min-gas-price=0
+      --sync-min-peers=0
+      --bootnodes=enode://261235ef234441f3e846dddfb31943e773e76ba0d0c519bb881bdf4cba1b6773d09aaf2e475943d0f2353cc2016175faa81cb6fc9c60d7b08a388b935176e1cc@47.111.17.198:30303
+
+    depends_on:
+      - validator1
+    networks:
+      besu-net:
+        ipv4_address: 172.20.0.4
+
+  validator4:
+    image: hyperledger/besu:25.12.0
+    container_name: besu-validator4
+    working_dir: /besu
+    user: "1000:1000"
+    volumes:
+      - ./networkFiles:/networkFiles:ro
+      - ./data/validator4:/data
+    command: >
+      --data-path=/data
+      --genesis-file=/networkFiles/genesis.json
+      --node-private-key-file=/networkFiles/keys/0xeeb39a1754f0ee86aebb0bdd8045aa5a497e90b5/key
+      --rpc-http-enabled=false
+      --p2p-host=0.0.0.0
+      --p2p-port=30303
+      --logging=INFO
+      --min-gas-price=0
+      --sync-min-peers=0
+      --bootnodes=enode://261235ef234441f3e846dddfb31943e773e76ba0d0c519bb881bdf4cba1b6773d09aaf2e475943d0f2353cc2016175faa81cb6fc9c60d7b08a388b935176e1cc@47.111.17.198:30303
+    depends_on:
+      - validator1
+    networks:
+       besu-net:
+          ipv4_address: 172.20.0.5
