@@ -7,6 +7,8 @@ networks:
       config:
         - subnet: 172.20.0.0/24
           gateway: 172.20.0.1
+  knowledge-infra:
+    external: true
 
 services:
   validator1:
@@ -24,13 +26,13 @@ services:
       --rpc-http-enabled=true
       --rpc-http-host=0.0.0.0
       --rpc-http-port=8545
-      --rpc-http-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG,ADMIN,QBFT
+      --rpc-http-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG,ADMIN,QBFT,PERM
       --host-allowlist=*
       --rpc-http-cors-origins=*
       --rpc-ws-enabled=true
       --rpc-ws-host=0.0.0.0
       --rpc-ws-port=8546
-      --rpc-ws-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG,ADMIN,QBFT
+      --rpc-ws-api=ETH,NET,WEB3,TXPOOL,TRACE,DEBUG,ADMIN,QBFT,PERM
       --p2p-port=30303
       --logging=INFO
       --min-gas-price=0
@@ -42,6 +44,7 @@ services:
     networks:
       besu-net:
         ipv4_address: 172.20.0.2
+      knowledge-infra: {}
 
   validator2:
     image: hyperledger/besu:25.12.0
